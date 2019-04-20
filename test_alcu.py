@@ -3,6 +3,7 @@ import tempfile
 
 import pytest
 from . import app, database
+from .shared import db
 
 
 @pytest.fixture
@@ -20,9 +21,20 @@ def client():
     os.unlink(app.app.config['DATABASE'])
 
 
-def test_empty_db(client):
+def test_landing_page(client):
     """Start with a blank database."""
 
     rv = client.get('/')
     print(rv.data)
     assert b"I'm Alive" in rv.data
+
+
+def test_create_channel():
+    rv = create_channel(client)
+    assert b'You were logged in' in rv.data
+
+
+def create_channel(client):
+    return client.post('create', data=dict(
+        username="Test1"
+    ))
