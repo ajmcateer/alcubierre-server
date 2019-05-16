@@ -23,12 +23,16 @@ class Channel(db.Model):
     def __repr__(self):
         return '<Channel %r>' % self.name
 
-    def dict(self):
+    def dict(self, show_admin):
+
         channel = {
             "name": self.name,
             "icon": self.icon,
             "listen_key": self.listen_key,
             "created": int((self.created_date - datetime.utcfromtimestamp(0)).total_seconds()),
         }
+
+        if show_admin:
+            channel["admin_key"] = self.admin_key
 
         return channel

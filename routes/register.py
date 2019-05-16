@@ -22,12 +22,8 @@ def register():
     message_type = request.form.get('message_type')
     error = None
 
-    test = Device.query.filter(Device.uuid == uuid).first()
-
     if not uuid:
         error = 'uuid is required.'
-    elif not public_key:
-        error = 'public_key is required.'
     elif not name:
         error = 'name is required.'
     elif not message_type:

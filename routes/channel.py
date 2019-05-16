@@ -28,10 +28,10 @@ def register():
     channel = Channel(name=name, icon=icon)
     db.session.add(channel)
     db.session.commit()
-    return jsonify(channel.dict())
+    return jsonify(channel.dict(True))
 
 
-@bp.route('/', methods=['GET'])
+@bp.route('/', methods=['GET'], strict_slashes=False)
 def get_channels():
     name = request.args.get('name')
 
@@ -41,18 +41,20 @@ def get_channels():
     channel = Channel.query.filter(Channel.name == name).first()
 
     if channel is not None:
-        return jsonify(channel.dict())
+        return jsonify(channel.dict(False))
     else:
         return to_error_json("Channel {} does not exist".format(name))
 
 
 @bp.route('/delete', methods=['POST'])
 def delete_channels():
-    name = request.args.get('name')
-    admin_key = request.args.get('admin_key')
+    name = request.form.get('name')
+    admin_key = request.form.get('admin_key')
 
-    if name or admin_key is None:
-        return to_error_json("name or admin key is missing")
+    if name is None:
+        return to_error_json("name is missing")
+    elif admin_key is None:
+        return to_error_json("admin key is missing")
 
     channel = Channel.query.filter(Channel.name == name, Channel.admin_key == admin_key).first()
 
